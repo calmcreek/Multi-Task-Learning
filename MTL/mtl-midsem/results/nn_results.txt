@@ -1,0 +1,5 @@
+Neural Net Results
+---------------------
+✅ Train: 0.97
+✅ Test: 0.70
+
