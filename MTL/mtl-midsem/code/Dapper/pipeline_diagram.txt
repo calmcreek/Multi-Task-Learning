@@ -1,0 +1,71 @@
+ ┌─────────────────────────────┐
+ │      Raw DAPPER Data        │
+ │ ┌─────────────┐ ┌─────────┐ │
+ │ │ Pre-test    │ │ Psychol │ │
+ │ │ trait.xls   │ │ DRM/ESM │ │
+ │ └─────────────┘ └─────────┘ │
+ │ Physiol_Rec (ECG, GSR, ACC) │
+ └─────────────┬───────────────┘
+               │
+               ▼
+ ┌───────────────────────────────────────────────────────────────────────────────┐
+ │  Preprocessing (preprocess_dapper.py)                                         │
+ │ - Sliding windows for each sensor                                             │
+ │ - Compute time-domain & spectral features                                     │
+ │ - Align features with labels (valence, arousal, positive affect)              │
+ │ - Save processed Parquet file                                                 │
+ └─────────────┬─────────────────────────────────────────────────────────────────┘
+               │
+               ▼
+ ┌─────────────────────────────────────────────────┐
+ │  Features (dapper_features.parquet)             │
+ │ - Columns: HR_mean, HR_std, GSR_mean, etc.      │
+ │ - Labels: valence, arousal, positive affect     │
+ └─────────────┬───────────────────────────────────┘
+               │
+               ▼
+ ┌───────────────────────────────────────┐
+ │  Dataset Loader (dataset.py)          │
+ │ - PyTorch Dataset class               │
+ │ - Handles missing labels with masks   │
+ │ - Returns (x, y, mask)                │
+ └─────────────┬─────────────────────────┘
+               │
+               ▼
+ ┌─────────────────────────────────────────────────┐
+ │  Multi-Task Model (mtl_model.py)                │
+ │ - Shared encoder (MLP)                          │
+ │ - Task heads: valence, arousal, positive affect │
+ │ - Forward pass returns predictions              │
+ └─────────────┬───────────────────────────────────┘
+               │
+               ▼
+ ┌─────────────────────────────────────────────────┐
+ │  Training Loop (train.py)                       │
+ │ - Loads dataset with DataLoader                 │
+ │ - Computes MSE loss per task with masks         │
+ │ - Optimizer: AdamW                              │
+ │ - Updates weights each batch                    │
+ │ - Saves checkpoints periodically                │
+ └─────────────┬───────────────────────────────────┘
+               │
+               ▼
+ ┌──────────────────────────────┐
+ │  Model Checkpoints / Results │
+ │ - Saved as .pth files        │
+ │ - Can be used for evaluation │
+ └──────────────────────────────┘
+
+
+
+ Flow Summary
+
+Raw Data → Preprocessing: Turn physiological signals into structured features and align with labels.
+
+Processed Parquet → Dataset Loader: Create PyTorch-compatible dataset with masks for missing labels.
+
+Dataset → MTL Model: Pass features through shared encoder + task-specific heads.
+
+Model → Training Loop: Compute loss, optimize, and save checkpoints.
+
+Trained Model → Evaluation / Downstream Tasks.

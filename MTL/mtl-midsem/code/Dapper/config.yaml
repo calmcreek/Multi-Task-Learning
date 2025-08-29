@@ -1,0 +1,24 @@
+# === FILE: code/Dapper/config.yaml ===
+paths:
+  raw_dir: code/Dapper/dataset_files/Pre-test
+  processed_out: code/Dapper/data/processed/dapper_features.parquet
+  splits_dir: ./Pre-test/splits
+
+training:
+  batch_size: 64
+  epochs: 40
+  lr: 0.001
+  weight_decay: 0.0001
+
+
+features:
+  window_seconds: 30
+  step_seconds: 15
+  sampling_rate: 20  # adjust if Pre-test is lower freq
+
+tasks:
+  - valence
+  - arousal
+  - panas_pos        # keep consistent with preprocess_dapper.py
+  - panas_neg
+

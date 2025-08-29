@@ -1,0 +1,142 @@
+$ python code/Dapper/preprocess_dapper.py 
+Saved dummy features for testing at code/Dapper/data/processed/dapper_features.parquet
+
+This output comes from running your preprocessing script:
+
+python code/Dapper/preprocess_dapper.py
+
+
+Here’s what it means step by step:
+
+1. Purpose of the script
+
+preprocess_dapper.py is meant to:
+
+Read the raw DAPPER data (CSV/Excel per participant).
+
+Extract time-series features (heart rate, GSR, accelerometer).
+
+Compute sliding window features (mean, std, spectral features) for each window.
+
+Collect labels (valence, arousal, positive affect).
+
+Save everything into a single Parquet file for training.
+
+2. Why it says “Saved dummy features…”
+
+You don’t have the full physiological data yet (Physiol_Rec), so you used a dummy script that:
+
+Reads the Pre-test Excel (trait.xls)
+
+Creates random or copied features for testing the pipeline
+
+Generates the dapper_features.parquet file
+
+3. What the message means
+Saved dummy features for testing at code/Dapper/data/processed/dapper_features.parquet
+
+
+The script successfully created a Parquet file with features and labels.
+
+Path: code/Dapper/data/processed/dapper_features.parquet
+
+This file is what your train.py reads to train the MTL model.
+
+4. Why it’s useful
+
+Even without the full DAPPER physiological recordings, you can test the training pipeline, dataset loader, and model code.
+
+Later, when you download the full dataset, you can replace the dummy Parquet with real preprocessed features.
+
+
+
+
+
+$ python code/Dapper/train.py 
+Epoch 1/40 avg_loss=1.2050
+Epoch 2/40 avg_loss=0.8246
+Epoch 3/40 avg_loss=0.6786
+Epoch 4/40 avg_loss=0.5430
+Epoch 5/40 avg_loss=0.5459
+Epoch 6/40 avg_loss=0.5467
+Epoch 7/40 avg_loss=0.5566
+Epoch 8/40 avg_loss=0.5012
+Epoch 9/40 avg_loss=0.6287
+Epoch 10/40 avg_loss=0.5382
+Epoch 11/40 avg_loss=0.4565
+Epoch 12/40 avg_loss=0.4236
+Epoch 13/40 avg_loss=0.4515
+Epoch 14/40 avg_loss=0.4143
+Epoch 15/40 avg_loss=0.4047
+Epoch 16/40 avg_loss=0.4397
+Epoch 17/40 avg_loss=0.4313
+Epoch 18/40 avg_loss=0.4402
+Epoch 19/40 avg_loss=0.3765
+Epoch 20/40 avg_loss=0.3568
+Epoch 21/40 avg_loss=0.4018
+Epoch 22/40 avg_loss=0.3501
+Epoch 23/40 avg_loss=0.3369
+Epoch 24/40 avg_loss=0.3405
+Epoch 25/40 avg_loss=0.3910
+Epoch 26/40 avg_loss=0.4114
+Epoch 27/40 avg_loss=0.3405
+Epoch 28/40 avg_loss=0.3416
+Epoch 29/40 avg_loss=0.3653
+Epoch 30/40 avg_loss=0.3159
+Epoch 31/40 avg_loss=0.3513
+Epoch 32/40 avg_loss=0.3345
+Epoch 33/40 avg_loss=0.3016
+Epoch 34/40 avg_loss=0.3293
+Epoch 35/40 avg_loss=0.3275
+Epoch 36/40 avg_loss=0.3128
+Epoch 37/40 avg_loss=0.3073
+Epoch 38/40 avg_loss=0.2840
+Epoch 39/40 avg_loss=0.2820
+Epoch 40/40 avg_loss=0.2900
+
+
+This output is the training log of your Multi-Task Learning (MTL) model on the DAPPER dataset. Let me break it down for you:
+
+1. Command
+python code/Dapper/train.py
+
+
+Runs your train.py script.
+
+This script loads the preprocessed dataset (dapper_features.parquet), creates the PyTorch DataLoader, and trains the DapperMTL model.
+
+2. Epochs
+Epoch 1/40 avg_loss=1.2050
+Epoch 2/40 avg_loss=0.8246
+...
+Epoch 40/40 avg_loss=0.2900
+
+
+Epoch 1/40 → First pass through the entire training dataset.
+
+avg_loss → The average loss (error) over all batches in that epoch.
+
+Loss is computed from the difference between predicted and actual labels for the tasks (valence, arousal, positive affect), weighted by masks if a value is missing.
+
+3. What it shows
+
+Loss decreasing: From 1.205 → 0.29.
+This is good: your model is learning from the data.
+
+Fluctuations (like 0.543 → 0.556) are normal because of batch sampling and randomness.
+
+4. Interpretation
+
+After 40 epochs, the model has converged reasonably well on your training dataset.
+
+Lower loss → predictions are closer to actual values.
+
+Next steps we can do:
+
+Evaluate the model on a validation/test set.
+
+Plot predictions vs. true labels to see quality.
+
+Save the model for later inference or fine-tuning.
+
+
