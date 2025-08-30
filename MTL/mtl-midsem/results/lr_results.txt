@@ -1,0 +1,12 @@
+Training accuracy: 0.9750623441396509 
+Test accuracy: 0.7034883720930233
+
+Classification Report: 
+          precision recall f1-score support 
+Anger     0.71      0.65   0.68     60 
+Happy     0.86      0.86   0.86     14 
+Neutral   0.71      0.71   0.71     38 
+Sad       0.66      0.72   0.69     60 
+accuracy                   0.70     172 
+macro avg 0.73      0.73   0.73     172 
+weighted avg 0.70   0.70   0.70     172

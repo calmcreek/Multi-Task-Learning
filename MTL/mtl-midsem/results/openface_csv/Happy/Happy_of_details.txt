@@ -1,0 +1,13 @@
+Input:data/affectnet/miniset/Happy
+Input full path:/Users/niha/mtl-emotion/data/affectnet/miniset/Happy
+Camera parameters:87.5,87.5,48,48
+Output HOG:Happy.hog
+Output video:Happy.avi
+Output aligned directory:Happy_aligned
+Output csv:Happy.csv
+Gaze: 1
+AUs: 1
+Landmarks 2D: 1
+Landmarks 3D: 1
+Pose: 1
+Shape parameters: 1
