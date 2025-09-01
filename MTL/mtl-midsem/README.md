@@ -4,7 +4,7 @@
 Multi-task learning for **emotion classification, stress prediction, and affective state (valence-arousal) regression** using facial features extracted from videos.
 
 ## Project Pipeline (so far)
-Video → OpenFace → Feature Extraction → Aligned Images & CSV/Parquet → Preprocessing → CSV datasets
+Video → OpenFace → Feature Extraction → Aligned Images & CSV/Parquet → Preprocessing → CSV datasets → Fine-tuning / Testing split
 
 **Details:**
 1. **Video Input:** Videos of subjects expressing different emotions (Anger, Sad, Happy, Neutral).  
@@ -15,34 +15,40 @@ Video → OpenFace → Feature Extraction → Aligned Images & CSV/Parquet → P
 3. **Feature Processing (Preprocessing):**  
    - 70% of rows from each CSV used for **encoder pretraining** (unlabelled)  
    - 30% of rows from each CSV used for **multi-task classifier** (labelled with emotion, stress, valence, arousal)  
+4. **Labelled Dataset Split:**  
+   - Labelled dataset is split into **Fine-tuning (80%)** and **Testing (20%)** sets  
+   - Stratified split to maintain per-emotion balance  
 
 ## Folder Structure
 ```
 
 mtl-midsem/
 │
-├─ code/                     # Python scripts
-│   └─ prepare\_datasets.py   # Preprocess OpenFace CSVs, create pretrain & labelled datasets
+├─ code/
+│   ├─ prepare_datasets.py   # Preprocess OpenFace CSVs, create pretrain & labelled datasets
+│   └─ split_labelled.py     # Split labelled dataset into fine-tune and test sets
 │
 ├─ results/
-│   ├─ openface\_csv/         # CSVs extracted from OpenFace
+│   ├─ openface_csv/
 │   │   ├─ Anger/Anger.csv
 │   │   ├─ Sad/Sad.csv
 │   │   ├─ Happy/Happy.csv
 │   │   └─ Neutral/Neutral.csv
-│   ├─ parquet/              # Optional parquet versions of the datasets
-│   │   └─ affectnet\_openface.parquet
-│   ├─ aligned\_images/       # Aligned face images extracted by OpenFace
+│   ├─ parquet/
+│   │   └─ affectnet_openface.parquet
+│   ├─ aligned_images/
 │   │   ├─ Anger/
 │   │   ├─ Sad/
 │   │   ├─ Happy/
 │   │   └─ Neutral/
-│   └─ processed\_csv/        # Output from prepare\_datasets.py
-│       ├─ pretrain\_dataset.csv
-│       └─ labelled\_dataset.csv
+│   └─ processed_csv/
+│       ├─ pretrain_dataset.csv
+│       ├─ labelled_dataset.csv
+│       ├─ fine_tune_dataset.csv
+│       └─ test_dataset.csv
 │
-├─ report/mtl\_midsem\_report.pdf
-└─ slides/mtl\_midsem\_slides.pptx
+├─ report/mtl_midsem_report.pdf
+└─ slides/mtl_midsem_slides.pptx
 
 ````
 
@@ -93,6 +99,23 @@ python code/prepare_datasets.py
 * Generates `pretrain_dataset.csv` → 70% unlabelled data for encoder pretraining
 * Generates `labelled_dataset.csv` → 30% labelled data for multi-task classifier
 
+5. **Split labelled dataset into Fine-tuning and Testing sets**
+
+```bash
+python code/split_labelled.py
+```
+
+* Generates `fine_tune_dataset.csv` → 138 rows
+* Generates `test_dataset.csv` → 35 rows
+* Stratified by emotion to maintain balance
+
+### Results of Split
+
+| Dataset     | Angry | Sad | Neutral | Happy | Total |
+| ----------- | ----- | --- | ------- | ----- | ----- |
+| Fine-tuning | 48    | 48  | 31      | 11    | 138   |
+| Testing     | 12    | 12  | 8       | 3     | 35    |
+
 ## Notes on Labels
 
 * **Emotion:** Comes from folder name (`Anger`, `Sad`, `Happy`, `Neutral`)
@@ -106,5 +129,11 @@ python code/prepare_datasets.py
   \| Happy   | 2.0     | 2.0     |
   \| Sad     | 1.0     | 1.0     |
   \| Angry   | 1.0     | 2.0     |
-  \| Neutral | 1.5     | 1.5 |
+  \| Neutral | 1.5     | 1.5     |
 
+## Notes on Fine-tuning / Last Step
+
+* **Fine-tuning dataset (`fine_tune_dataset.csv`)** is used to train the multi-task classifier using the pre-trained encoder.
+* **Testing dataset (`test_dataset.csv`)** is used to evaluate performance on unseen data.
+* Both datasets are **stratified by emotion** to maintain label balance.
+* After this step, the pipeline is ready for **multi-task learning experiments**.
