@@ -131,7 +131,7 @@ python code/split_labelled.py
   \| Angry   | 1.0     | 2.0     |
   \| Neutral | 1.5     | 1.5     |
 
-## Notes on Fine-tuning / Last Step
+## Notes on Fine-tuning
 
 * **Fine-tuning dataset (`fine_tune_dataset.csv`)** is used to train the multi-task classifier using the pre-trained encoder.
 * **Testing dataset (`test_dataset.csv`)** is used to evaluate performance on unseen data.
