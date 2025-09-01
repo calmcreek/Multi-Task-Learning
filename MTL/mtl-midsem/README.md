@@ -124,12 +124,12 @@ python code/split_labelled.py
   * Angry & Sad → High (1)
   * Happy & Neutral → Low (0)
 * **Valence-Arousal (Affective State):**
-  \| Emotion | Valence | Arousal |
-  \|---------|---------|---------|
-  \| Happy   | 2.0     | 2.0     |
-  \| Sad     | 1.0     | 1.0     |
-  \| Angry   | 1.0     | 2.0     |
-  \| Neutral | 1.5     | 1.5     |
+  | Emotion | Valence | Arousal |
+  |---------|---------|---------|
+  | Happy   | 2.0     | 2.0     |
+  | Sad     | 1.0     | 1.0     |
+  | Angry   | 1.0     | 2.0     |
+  | Neutral | 1.5     | 1.5     |
 
 ## Notes on Fine-tuning
 
