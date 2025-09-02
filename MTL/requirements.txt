@@ -1,1 +1,58 @@
 pip install xlrd pyarrow fastparquet
+
+# ==========================
+# Core Python Libraries
+# ==========================
+numpy==1.26.0
+pandas==2.1.0
+scipy==1.11.1
+tqdm==4.66.1
+typing-extensions==4.7.1
+
+# ==========================
+# Machine Learning / Preprocessing
+# ==========================
+scikit-learn==1.3.0
+imbalanced-learn==1.12.1  # for SMOTE / class imbalance
+joblib==1.3.2             # for saving/loading models
+category_encoders==2.7.0  # optional, encoding categorical features
+
+# ==========================
+# Deep Learning / PyTorch
+# ==========================
+torch==2.2.0
+torchvision==0.18.1
+torchaudio==2.2.0
+
+# ==========================
+# Data Storage / IO
+# ==========================
+pyarrow==12.0.1      # reading/writing parquet
+fastparquet==2025.8.0
+Pillow==10.1.0        # image processing
+h5py==3.9.0           # optional, for storing datasets
+
+# ==========================
+# Video / Image Processing
+# ==========================
+opencv-python==4.9.0.74
+imageio==2.31.4
+scikit-image==0.21.0
+
+# ==========================
+# Visualization / Plots (optional)
+# ==========================
+matplotlib==3.9.2
+seaborn==0.12.3
+plotly==6.4.0          # for interactive plots
+
+# ==========================
+# File & OS Handling
+# ==========================
+pathlib==1.0.1
+shutilwhich==1.1.2      # ensures external binaries are found
+
+# ==========================
+# Others / Utility
+# ==========================
+python-dotenv==1.0.1    # optional, if using environment variables
