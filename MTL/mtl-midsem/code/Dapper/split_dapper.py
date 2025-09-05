@@ -12,6 +12,8 @@ df = pd.read_parquet(data_path)
 if "participant_id" not in df.columns:
     raise ValueError("participant_id column missing! Ensure preprocess_dapper.py saves it.")
 
+print("Number of unique participants in processed data:", df['participant_id'].nunique())
+
 # Unique participants
 subjects = df["participant_id"].unique()
 train_subj, test_subj = train_test_split(subjects, test_size=0.15, random_state=42)

@@ -15,7 +15,7 @@ training:
 features:
   window_seconds: 30
   step_seconds: 15
-  sampling_rate: 20  # adjust if Pre-test is lower freq
+  sampling_rate: 30  # adjust if Pre-test is lower freq
 
 tasks:
   - valence

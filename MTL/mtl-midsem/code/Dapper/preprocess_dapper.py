@@ -1,12 +1,12 @@
 # === FILE: code/Dapper/preprocess_dapper.py ===
 """
-Preprocess DAPPER physiological data:
+Preprocess DAPPER physiological data safely:
 
 - Load raw CSVs (HR, GSR, PPG, ACC)
 - Convert timestamps to seconds
 - Create sliding-window features
 - Attach optional labels if available
-- Save processed parquet file
+- Save processed parquet file incrementally
 """
 
 import os
@@ -23,17 +23,23 @@ def load_config(path='code/Dapper/config.yaml'):
 
 def process_participant(part_dir, cfg):
     """Process all CSV recordings of a participant into windowed features."""
-    all_files = sorted(glob.glob(os.path.join(part_dir, '*.csv')))
+    csv_files = [f for f in os.listdir(part_dir) 
+                 if f.endswith('.csv') and not f.endswith(('_ACC.csv', '_GSR.csv', '_PPG.csv'))]
     records = []
 
-    for csv_file in all_files:
-        # Skip ACC/GSR/PPG suffix files if needed, only use main recordings OR handle them separately
-        if any(suffix in csv_file for suffix in ['ACC', 'GSR', 'PPG']):
+    for csv_file in csv_files:
+        csv_path = os.path.join(part_dir, csv_file)
+        if os.path.getsize(csv_path) == 0:
+            print(f"⚠️  Skipping empty file: {csv_path}")
             continue
 
-        df = pd.read_csv(csv_file)
+        try:
+            df = pd.read_csv(csv_path)
+        except pd.errors.EmptyDataError:
+            print(f"⚠️  Skipping unreadable file: {csv_path}")
+            continue
 
-        # --- Handle timestamp ---
+        # --- Handle timestamps ---
         if 'timestamp' in df.columns:
             try:
                 t = pd.to_datetime(df['timestamp']).astype('int64') // 1_000_000_000
@@ -53,8 +59,9 @@ def process_participant(part_dir, cfg):
             else:
                 sensors[col] = np.zeros(len(df))
 
-        window_s = cfg['features']['window_seconds']
-        step_s = cfg['features']['step_seconds']
+        # --- Reduced windowing ---
+        window_s = cfg['features']['window_seconds']   # e.g., 30 sec
+        step_s = cfg['features']['step_seconds'] * 2  # doubled step to reduce overlap
         fs = cfg['features']['sampling_rate']
 
         # --- Sliding windows ---
@@ -101,18 +108,23 @@ def main(raw_root=None, out_path=None):
     raw_root = raw_root or "code/Dapper/dataset_files/Physiol_Rec1/Physiol_Rec"
     out_path = out_path or "code/Dapper/data/processed/dapper_features.parquet"
 
-    all_records = []
     participants = [d for d in os.listdir(raw_root) if os.path.isdir(os.path.join(raw_root, d))]
 
-    for pid in participants:
+    # Process each participant separately and append to parquet to save memory
+    for idx, pid in enumerate(participants):
         part_dir = os.path.join(raw_root, pid)
-        print(f"Processing participant {pid}")
+        print(f"Processing participant {pid} ({idx+1}/{len(participants)})")
         recs = process_participant(part_dir, cfg)
-        all_records.extend(recs)
+        df_part = pd.DataFrame(recs)
 
-    df_out = pd.DataFrame(all_records)
-    os.makedirs(os.path.dirname(out_path), exist_ok=True)
-    df_out.to_parquet(out_path, index=False)
+        # Incremental saving
+        if not os.path.exists(out_path):
+            df_part.to_parquet(out_path, index=False)
+        else:
+            df_existing = pd.read_parquet(out_path)
+            df_combined = pd.concat([df_existing, df_part], ignore_index=True)
+            df_combined.to_parquet(out_path, index=False)
+
     print(f"✅ Saved processed features to {out_path}")
 
 if __name__ == '__main__':
