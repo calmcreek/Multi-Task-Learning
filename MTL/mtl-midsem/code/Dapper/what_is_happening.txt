@@ -139,4 +139,18 @@ Plot predictions vs. true labels to see quality.
 
 Save the model for later inference or fine-tuning.
 
+5. Relationship Between Psychol_Rec and Physiol_Rec
 
+Think of it like this:
+
+Physiol_Rec = raw signals (features → X).
+
+Psychol_Rec = self-reports/annotations (labels → y).
+
+👉 The link between the two is time and subject ID:
+
+Each Physiol_Rec session (20191124_..._ACC.csv) corresponds to a recording window for a participant.
+
+Psychol_Rec tells us how that participant reported their feelings during or after the session.
+
+To build your dataset, you synchronize Physiol_Rec with Psychol_Rec → for each time window of signals, assign the corresponding valence/arousal/emotion label from ESM/DRM.

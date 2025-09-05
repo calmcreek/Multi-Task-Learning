@@ -1,8 +1,9 @@
 # === FILE: code/Dapper/config.yaml ===
 paths:
-  raw_dir: code/Dapper/dataset_files/Pre-test
+  # raw_dir: code/Dapper/dataset_files/Pre-test
+  raw_dir : code/Dapper/dataset_files/Physiol_Rec1/Physiol_Rec
   processed_out: code/Dapper/data/processed/dapper_features.parquet
-  splits_dir: ./Pre-test/splits
+  splits_dir: code/Dapper/data/splits
 
 training:
   batch_size: 64

@@ -1,0 +1,200 @@
+Perfect — now you’re asking the **right question** 🎯. You want to know:
+
+* How to **run each Python file** in your repo.
+* What **outputs** you should expect.
+* How everything fits into the **ML pipeline**.
+
+Let’s go step by step:
+
+---
+
+# 🔹 1. `dataset.py`
+
+**Purpose**: Loads raw signals (`Physiol_Rec`) + labels (`Psychol_Rec`), wraps them into a dataset class (likely PyTorch `Dataset`).
+
+**Run it**:
+
+```bash
+python code/Dapper/dataset.py
+```
+
+👉 It will either:
+
+* Print shapes / dataset summary, OR
+* Do nothing (if it’s just a class file, you import it in `train.py`).
+
+**Output**:
+
+* Prepares data into train/test splits (but not training yet).
+* Acts as **data loader** for your ML pipeline.
+
+---
+
+# 🔹 2. `features.py`
+
+**Purpose**: Extracts features from raw signals.
+
+* Reads `.csv` files inside `Physiol_Rec`.
+* Computes features (e.g., HRV from ECG, EDA peaks from GSR, PPG pulse rate, ACC energy).
+* Stores them in `data/processed/dapper_features.parquet`.
+
+**Run it**:
+
+```bash
+python code/Dapper/features.py
+```
+
+**Output**:
+
+* `dapper_features.parquet` (already present in your `data/processed/`).
+* This is the **main feature dataset** you’ll train on.
+
+---
+
+# 🔹 3. `preprocess_dapper.py`
+
+**Purpose**: End-to-end preprocessing.
+
+* Uses `features.py` + `utils.py` functions.
+* Cleans, normalizes, and aligns physiological signals with psychological labels.
+
+**Run it**:
+
+```bash
+python code/Dapper/preprocess_dapper.py
+```
+
+**Output**:
+
+* Updated `data/processed/dapper_features.parquet` file.
+* This is where **raw signals → clean features + labels** happens.
+
+---
+
+# 🔹 4. `split_dapper.py`
+
+**Purpose**: Splits dataset into train, validation, test.
+
+* Reads `dapper_features.parquet`.
+* Splits based on subject IDs (to avoid leakage).
+
+**Run it**:
+
+```bash
+python code/Dapper/split_dapper.py
+```
+
+**Output**:
+
+* Train, validation, test partitions (stored internally, sometimes as `.pkl` or just in memory).
+
+---
+
+# 🔹 5. `mtl_model.py`
+
+**Purpose**: Defines the **Multi-Task Learning model** (likely PyTorch).
+
+* Multiple heads: one for emotion, one for stress, one for anxiety, etc.
+* Takes shared physiological features as input.
+
+**Run it**:
+
+```bash
+python code/Dapper/mtl_model.py
+```
+
+**Output**:
+
+* Probably nothing standalone (it just defines the class).
+* Gets called inside `train.py`.
+
+---
+
+# 🔹 6. `train.py`
+
+**Purpose**: The **main training script** 🚀.
+
+* Loads dataset (`dataset.py`).
+* Loads features (`dapper_features.parquet`).
+* Splits dataset (`split_dapper.py`).
+* Initializes MTL model (`mtl_model.py`).
+* Trains and evaluates it.
+
+**Run it**:
+
+```bash
+python code/Dapper/train.py
+```
+
+**Output**:
+
+* Console logs (training loss, validation accuracy, metrics per task).
+* May save model weights (`.pt` or `.pth`) in repo.
+
+---
+
+# 🔹 7. `utils.py`
+
+**Purpose**: Helper functions (logging, normalization, metrics, etc.).
+
+**Run it**:
+
+```bash
+python code/Dapper/utils.py
+```
+
+**Output**:
+
+* Likely nothing (support file only).
+
+---
+
+# 🔹 8. MATLAB Scripts (`dataset_files/Scripts/*.m`)
+
+These are **demo scripts** from original DAPPER authors.
+
+* `extractfeatures.m`: baseline feature extraction.
+* `timematch.m`: aligns physiology with psychology reports.
+* `noisetoolchange.m`: noise removal.
+* `Figure2_demo.m` → `Figure8_demo.m`: plot figures from the original paper.
+
+**Run them in MATLAB**, not Python.
+
+---
+
+# 🔹 9. Other Files
+
+* `config.yaml`: training config (hyperparams, paths).
+* `README.md`: explains dataset.
+* `what_is_happening.txt`: probably your notes.
+* `pipeline_diagram.txt`: pipeline structure diagram.
+
+---
+
+# 🔹 📌 Run Order
+
+If you want to **execute full pipeline**:
+
+```bash
+# 1. Preprocess & feature extraction
+python code/Dapper/features.py
+python code/Dapper/preprocess_dapper.py
+
+# 2. Train/validation split
+python code/Dapper/split_dapper.py
+
+# 3. Train MTL model
+python code/Dapper/train.py
+```
+
+---
+
+✅ **Final View:**
+
+* `features.py` + `preprocess_dapper.py` = build dataset.
+* `split_dapper.py` = split dataset.
+* `train.py` = train model.
+* `mtl_model.py` + `dataset.py` + `utils.py` = support code.
+
+---
+
