@@ -52,6 +52,7 @@ python code/Dapper/features.py
 ---
 
 # 🔹 3. `preprocess_dapper.py`
+pip install openpyxl
 
 **Purpose**: End-to-end preprocessing.
 

@@ -8,6 +8,8 @@ from dataset import DapperDataset
 from mtl_model import DapperMTL
 from utils import set_seed, save_checkpoint
 import os
+import warnings
+warnings.simplefilter(action='ignore', category=FutureWarning)
 
 def load_config(path='code/Dapper/config.yaml'):
     with open(path,'r') as f:
