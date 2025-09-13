@@ -1,4 +1,4 @@
-# MTL Midsem Project
+# MTL Midsem Project ( Neeharika's work)
 
 ## Aim
 Multi-task learning for **emotion classification, stress prediction, and affective state (valence-arousal) regression** using facial features extracted from videos.
