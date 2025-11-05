@@ -1,0 +1,13 @@
+Input:/Users/niha/Desktop/Multi-Task-Learning-main/MTL/data/affectnet/archive (3)/Train_subset/happy
+Input full path:/Users/niha/Desktop/Multi-Task-Learning-main/MTL/data/affectnet/archive (3)/Train_subset/happy
+Camera parameters:87.5,87.5,48,48
+Output HOG:happy.hog
+Output video:happy.avi
+Output aligned directory:happy_aligned
+Output csv:happy.csv
+Gaze: 1
+AUs: 1
+Landmarks 2D: 1
+Landmarks 3D: 1
+Pose: 1
+Shape parameters: 1

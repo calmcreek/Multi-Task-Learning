@@ -8,19 +8,25 @@ from pathlib import Path
 # CONFIG: paths
 # -----------------------------
 # BASE_DIR points to repo root (mtl-midsem/)
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 # Input CSVs for each emotion
-CSV_ROOT = BASE_DIR / "results" / "openface_csv"
+# Corrected input and output paths
+CSV_ROOT = BASE_DIR / "data" / "affectnet" / "features"
+
 emotion_files = {
-    "angry": CSV_ROOT / "Anger" / "Anger.csv",
-    "sad": CSV_ROOT / "Sad" / "Sad.csv",
-    "happy": CSV_ROOT / "Happy" / "Happy.csv",
-    "neutral": CSV_ROOT / "Neutral" / "Neutral.csv",
+    "angry": CSV_ROOT / "anger" / "anger.csv",
+    "sad": CSV_ROOT / "sad" / "sad.csv",
+    "happy": CSV_ROOT / "happy" / "happy.csv",
+    "neutral": CSV_ROOT / "neutral" / "neutral.csv",
+    "fear": CSV_ROOT / "fear" / "fear.csv",
+    "disgust": CSV_ROOT / "disgust" / "disgust.csv",
+    "contempt": CSV_ROOT / "contempt" / "contempt.csv",
+    "surprise": CSV_ROOT / "surprise" / "surprise.csv",
 }
 
-# Output folder
-OUT_DIR = BASE_DIR / "results" / "processed_csv"
+OUT_DIR = BASE_DIR / "mtl-midsem" / "results" / "processed_csv"
+
 OUT_DIR.mkdir(parents=True, exist_ok=True)
 pretrain_out = OUT_DIR / "pretrain_dataset.csv"
 labelled_out = OUT_DIR / "labelled_dataset.csv"
@@ -43,11 +49,16 @@ def add_labels(df, emotion):
     df['emotion'] = emotion
     df['stress'] = 1 if emotion in ("angry", "sad") else 0
     mapping = {
-        "happy": (2.0, 2.0),
-        "sad": (1.0, 1.0),
-        "angry": (1.0, 2.0),
-        "neutral": (1.5, 1.5)
+    "happy": (2.0, 2.0),
+    "sad": (1.0, 1.0),
+    "angry": (1.0, 2.0),
+    "neutral": (1.5, 1.5),
+    "fear": (0.8, 2.5),
+    "disgust": (0.9, 2.0),
+    "contempt": (1.2, 1.8),
+    "surprise": (2.2, 2.5),
     }
+
     val, aro = mapping[emotion]
     df['valence'] = val
     df['arousal'] = aro

@@ -1,0 +1,13 @@
+Input:/Users/niha/Desktop/Multi-Task-Learning-main/MTL/data/affectnet/archive (3)/Train_subset/Disgust
+Input full path:/Users/niha/Desktop/Multi-Task-Learning-main/MTL/data/affectnet/archive (3)/Train_subset/Disgust
+Camera parameters:87.5,87.5,48,48
+Output HOG:Disgust.hog
+Output video:Disgust.avi
+Output aligned directory:Disgust_aligned
+Output csv:Disgust.csv
+Gaze: 1
+AUs: 1
+Landmarks 2D: 1
+Landmarks 3D: 1
+Pose: 1
+Shape parameters: 1
